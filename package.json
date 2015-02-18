@@ -1,0 +1,26 @@
+{
+  "name": "active-deployer",
+  "version": "0.0.1",
+  "devDependencies": {
+    "gulp": "*",
+    "gulp-jasmine": "*",
+    "karma": "*",
+    "promise": "*",
+    "karma-jasmine": "*",
+    "karma-requirejs": "*",
+    "phantomjs": "*",
+    "karma-phantomjs-launcher": "*",
+    "html2js": "*",
+    "karma-html2js-preprocessor": "*",
+    "karma-teamcity-reporter": "*",
+    "karma-coverage": "*",
+    "jasmine-reporters": "*",
+    "jasmine": "*"
+  },
+  "engines": {
+    "node": ">=0.8.0"
+  },
+  "scripts" : {
+    "test" : "gulp"
+  }
+}
