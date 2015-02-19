@@ -15,7 +15,8 @@
     "karma-teamcity-reporter": "*",
     "karma-coverage": "*",
     "jasmine-reporters": "*",
-    "jasmine": "*"
+    "jasmine": "*",
+    "server-destroy": "*"
   },
   "engines": {
     "node": ">=0.8.0"
