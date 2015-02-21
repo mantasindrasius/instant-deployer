@@ -16,7 +16,8 @@
     "karma-coverage": "*",
     "jasmine-reporters": "*",
     "jasmine": "*",
-    "server-destroy": "*"
+    "server-destroy": "*",
+    "temp": "*"
   },
   "engines": {
     "node": ">=0.8.0"

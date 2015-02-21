@@ -1,6 +1,7 @@
 var http = require('http');
 var Promise = require('promise');
 var events = require('events');
+var url = require('url');
 
 var httpClient = new function() {
     var pendingRequests = 0;
@@ -15,30 +16,27 @@ var httpClient = new function() {
         });
     };
 
-    this.post = function(url, postData) {
+    this.post = function(postUrl, data) {
+        pendingRequests++;
 
-        /*var postData = JSON.stringify({ id: 'aaa' });
+        var postData = JSON.stringify(data);
+        var options = url.parse(postUrl);
 
-         var options = {
-         hostname: 'localhost',
-         port: 9921,
-         path: '/publish',
-         method: 'POST',
-         headers: {
-         'Content-Type': 'application/json',
-         'Content-Length': postData.length
-         }
-         };
+        options.method = 'POST';
+        options.headers = {
+            'Content-Type': 'application/json',
+            'Content-Length': postData.length
+        };
 
-         http.request(options);
-         http.data(postData);
-         http.on('response', function(resp) {
-         console.log('RESPONSE');
+        return new Promise(function(fulfill, reject) {
+            var req = http.request(options);
 
-         expect(true).toBeFalsy();
-         cb();
-         });*/
+            req.on('response', wrap(fulfill));
+            req.on('error', wrap(reject));
 
+            req.write(postData);
+            req.end();
+        });
     };
 
     this.on = function(event, callback) {

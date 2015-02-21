@@ -3,12 +3,12 @@ var fs = require('fs');
 var index = fs.readFileSync('index.html');
 
 module.exports = {
-    server: http.createServer(function (req, res) {
-        //for (i in req) console.log(i);
+    createServer: function(conf) {
+        console.log('Config at', conf);
 
-        console.log('REQUEST');
-
-        res.writeHead(200, {'Content-Type': 'text/plain'});
-        res.end(index);
-    })
+        return http.createServer(function (req, res) {
+            res.writeHead(200, {'Content-Type': 'text/plain'});
+            res.end(index);
+        });
+    }
 };
