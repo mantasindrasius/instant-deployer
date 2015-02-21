@@ -5,12 +5,28 @@ var Promise = require('promise');
 var enableDestroy = require('server-destroy');
 
 var config = {
-  port: 9920
+  port: 9920,
+  fakeRepoPort: 9921
 };
 
 var readyEnvironment = {
-    serverUrl: 'http://localhost:' + config.port + '/'
+    serverUrl: 'http://localhost:' + config.port + '/',
+    fakeRepoUrl: 'http://localhost:' + config.fakeRepoPort + '/'
 };
+
+function startFakeRepo(port) {
+    return http.createServer(function (req, res) {
+        console.log('Fake repo', req.url);
+
+        if (req.url === '/xyz/def/1.0/def-1.0.jar') {
+            res.writeHead(200, {'Content-Type': 'text/html'});
+            res.end('<html><body>Up</body></html>');
+        } else {
+            res.writeHead(404, {'Content-Type': 'text/html'});
+            res.end('<html><body>Not found: ' + req.uri + '</body></html>');
+        }
+    }).listen(port);
+}
 
 function waitForServer(port) {
     return new Promise(function(fulfill, reject) {
@@ -42,10 +58,15 @@ function waitForServer(port) {
 function startEnvironment() {
     return new Promise(function(fulfill, reject) {
         temp.mkdir('deployer', function(err, dirPath) {
-            var conf = dirPath;
-            var server = createServer(conf);
+            var serverConfig = {
+                deploymentRoot: dirPath
+            };
+
+            var server = createServer(serverConfig);
+            var fakeRepoServer = startFakeRepo(config.fakeRepoPort);
 
             enableDestroy(server);
+            enableDestroy(fakeRepoServer);
 
             server.on('close', function() {
                 console.log('Server stopped');
@@ -54,9 +75,13 @@ function startEnvironment() {
             server.listen(config.port, 'localhost');
 
             readyEnvironment.config = config;
-            readyEnvironment.confFile = conf;
+            readyEnvironment.serverConfig = serverConfig;
             readyEnvironment.server = server;
-            readyEnvironment.deploymentRoot = dirPath;
+            readyEnvironment.deploymentRoot = dirPath + '/';
+            readyEnvironment.stop = function() {
+                server.destroy();
+                fakeRepoServer.destroy();
+            };
 
             fulfill(readyEnvironment);
 

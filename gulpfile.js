@@ -8,22 +8,21 @@ var jasmineOptions = {
     reporter: new jasmineReporters.TeamCityReporter()
 };
 
-var server;
+var env;
 
 gulp.task('default', ['e2e']);
 
 gulp.task('start-environment', function (cb) {
-    environment.then(function(environment) {
-        server = environment.server;
+    environment.then(function(readyEnv) {
+        env = readyEnv;
 
         cb();
     });
 });
 
-gulp.task('stop-server', function () {
+gulp.task('stop-environment', function () {
     client.on('no-more-pending', function() {
-        console.log('Server stopping');
-        server.destroy();
+        env.stop();
     });
 });
 
@@ -31,6 +30,6 @@ gulp.task('e2e', ['start-environment'], function () {
     return gulp.src('src/spec/e2e/**')
         .pipe(jasmine(jasmineOptions))
         .on('finish', function() {
-            gulp.start('stop-server');
+            gulp.start('stop-environment');
         });
 });
