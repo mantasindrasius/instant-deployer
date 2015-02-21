@@ -1,5 +1,5 @@
 {
-  "name": "active-deployer",
+  "name": "instant-deployer",
   "version": "0.0.1",
   "devDependencies": {
     "gulp": "*",
